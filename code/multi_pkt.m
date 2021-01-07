@@ -22,8 +22,6 @@ tic
 data_point_num = 12;
 x = [];
 
-theoritical_reliability_list = zeros(1,data_point_num);
-
 blind_success_prob_list = [];
 blind_resource_list = [];
 
@@ -45,8 +43,6 @@ parfor i = 1:data_point_num %par
     
     % Blind retransmission
     blind_trans_time = estimate_blind_m(e,rel_constraint,blind_upper_bound,total_packets);
-
-    theoritical_reliability_list(i) = prod(1-e.^blind_trans_time)^total_packets;
 
     [blind_resource...
         ,blind_success_prob]...
@@ -93,12 +89,10 @@ hold on
 scatter(x, nack_reliability_list, 10,'b','filled');
 hold on
 scatter(x, XOR_nack_reliability_list, 10,'g','d','filled');
-hold on
-scatter(x, theoritical_reliability_list, 10,'magenta','filled');
 hold off
 xlabel('average error probability');
 ylabel('Reliability');
-legend('baseline','blind\_retransmission','nack\_based\_retransmission','XOR\_nack\_based\_retransmission','Theorical','Location','southwest');
+legend('baseline','blind\_retransmission','nack\_based\_retransmission','XOR\_nack\_based\_retransmission','Location','southwest');
 title(['error prob. v.s. Reliability (n=' num2str(n) ', total\_packets\_num=' num2str(total_packets) newline ' ,packets\_per\_round = ' num2str(pkt_per_round) ' ,nack\_m = ' num2str(nack_m) ')']);
 
 subplot(1,3,2);
