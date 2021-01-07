@@ -1,8 +1,8 @@
 %% blind retransmission
-function [blind_resource,blind_success_prob] = blind_retransmission_sim(total_packets,e,blind_trans_time,rel_constraint,RB_data,type)
+function [blind_resource,blind_success_prob] = blind_retransmission_sim(total_packets,e,blind_trans_time,RB_data,type)
     if(type=="direct")
         %% Using error_prob directly to estimate
-        blind_success_prob = prod(1.-e.^i);
+        blind_success_prob = prod(1.-e.^blind_trans_time);
     elseif(type=="Monte Carlo")
         %% Using Simulation to estimate
         total_simulation = 10^5;

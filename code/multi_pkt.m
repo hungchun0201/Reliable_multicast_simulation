@@ -3,10 +3,10 @@ format long
 %% Parameters
 n = 30;
 
-L_constraint = 8;
+L_constraint = 12;
 T_RTT = 2;
 
-total_packets = 20;
+total_packets = 18;
 pkt_per_round = 2;
 XOR_pkt_num = 1;
 
@@ -21,6 +21,9 @@ RB_feedback = 0;
 tic
 data_point_num = 12;
 x = [];
+
+theoritical_reliability_list = zeros(1,data_point_num);
+
 blind_success_prob_list = [];
 blind_resource_list = [];
 
@@ -41,10 +44,13 @@ parfor i = 1:data_point_num %par
     %fprintf("Averaeg error prob: %f, and std is: %f\n",mean(e),std(e));
     
     % Blind retransmission
-    blind_trans_time = estimate_blind_m(e,rel_constraint,blind_upper_bound);
+    blind_trans_time = estimate_blind_m(e,rel_constraint,blind_upper_bound,total_packets);
+
+    theoritical_reliability_list(i) = prod(1-e.^blind_trans_time)^total_packets;
+
     [blind_resource...
         ,blind_success_prob]...
-        = blind_retransmission_sim(total_packets,e,blind_trans_time,rel_constraint,RB_data,"Monte Carlo");
+        = blind_retransmission_sim(total_packets,e,blind_trans_time,RB_data,"Monte Carlo");
     
     blind_success_prob_list = [blind_success_prob_list blind_success_prob];
     blind_resource_list = [blind_resource_list blind_resource];
@@ -54,7 +60,7 @@ parfor i = 1:data_point_num %par
         ave_resource_usage,...
         reliability,...
         nack_ave_bottleneck_UE_latency]...
-        = test_nack(total_packets,e,pkt_per_round,nack_m,0,L_constraint,T_RTT,RB_data,RB_feedback);
+        = nack_based_XOR_sim(total_packets, e, pkt_per_round, nack_m, 0, L_constraint, T_RTT, RB_data, RB_feedback);
     
     nack_ave_trans_latency_list = [nack_ave_trans_latency_list ave_trans_latency];
     nack_ave_resource_usage_list = [nack_ave_resource_usage_list ave_resource_usage];
@@ -66,7 +72,7 @@ parfor i = 1:data_point_num %par
     XOR_ave_resource_usage,...
     XOR_reliability,...
     XOR_nack_ave_bottleneck_UE_latency]...
-        = test_nack(total_packets,e,pkt_per_round,nack_m,XOR_pkt_num,L_constraint,T_RTT,RB_data,RB_feedback);
+        = nack_based_XOR_sim(total_packets,e,pkt_per_round,nack_m,XOR_pkt_num,L_constraint,T_RTT,RB_data,RB_feedback);
     
     XOR_nack_ave_trans_latency_list = [XOR_nack_ave_trans_latency_list XOR_ave_trans_latency];
     XOR_nack_ave_resource_usage_list = [XOR_nack_ave_resource_usage_list XOR_ave_resource_usage];
@@ -87,10 +93,12 @@ hold on
 scatter(x, nack_reliability_list, 10,'b','filled');
 hold on
 scatter(x, XOR_nack_reliability_list, 10,'g','d','filled');
+hold on
+scatter(x, theoritical_reliability_list, 10,'magenta','filled');
 hold off
 xlabel('average error probability');
 ylabel('Reliability');
-legend('baseline','blind\_retransmission','nack\_based\_retransmission','XOR\_nack\_based\_retransmission','Location','southwest');
+legend('baseline','blind\_retransmission','nack\_based\_retransmission','XOR\_nack\_based\_retransmission','Theorical','Location','southwest');
 title(['error prob. v.s. Reliability (n=' num2str(n) ', total\_packets\_num=' num2str(total_packets) newline ' ,packets\_per\_round = ' num2str(pkt_per_round) ' ,nack\_m = ' num2str(nack_m) ')']);
 
 subplot(1,3,2);
