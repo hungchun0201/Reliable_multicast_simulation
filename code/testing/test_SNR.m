@@ -28,9 +28,9 @@ Pr2 = tx_power_dBm_list - fspl(r,0.1) + log_normal_shoadowing;
 tmp_snr1 = Pr1 - noise_power;
 tmp_snr2 = Pr2 - noise_power;
 % disp(tmp_snr);
-plot(r,tmp_snr1);
+plot(r,Pr1);
 hold on
-plot(r,tmp_snr2);
+plot(r,Pr2);
 xlabel("Distance(m)");
 ylabel("Received power(dBm)");
 legend("UMi pathloss model","FSPL");

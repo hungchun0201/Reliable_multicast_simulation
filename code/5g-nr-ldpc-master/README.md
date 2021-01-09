@@ -9,3 +9,36 @@ So far the implementation supports the block lengths `N=[264, 544, 1056, 2176, 4
 
 ## References 
 [1] E. Sharon, S. Litsyn and J. Goldberger, "An efficient message-passing schedule for LDPC decoding," 2004 23rd IEEE Convention of Electrical and Electronics Engineers in Israel, Tel-Aviv, Israel, 2004, pp. 223-226.
+
+\documentclass{article}
+\usepackage{amsmath}
+\pagestyle{empty}
+\begin{document}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\pretolerance=200
+\begin{table}
+\centering
+\begin{tabular}{lll}
+
+\toprule
+Symbol & Explanation &Reference Value \\
+\midrule
+$N_{data}$ & Number of the total transmitted packet for the given data. & 20 \\
+$M_{blind}$ & Number of duplicated packets for a single packet in blind retransmission.  \\
+$M_{nack}$ & Number of duplicated packets for a single packet in nack-based retransmission.  \\
+$M_{XOR}$ & Number of XOR packets in nack-based retransmission.  \\
+$R_i$ & Total transmitted round for ith packet in nack-based retransmission.  \\
+$k$ &  Number of UE that receiving the service. & 30 \\
+ $e_j$ &  Packet error rate for jth UE  \\
+ $X_j$ &  R.V. representing the transmitted time for a single packet with error rate $p_j$   \\
+ $X$ &  R.V. representing the maximum transmitted time among all of the UEs   \\
+ $T_{RTT}$ &  Round trip time in nack-based retransmission 1ms \\
+$Rel_{constraint}$ & Reliability constraint for the service. & 0.9999 \\
+$L_{constraint}$ & Latency constraint between BS and UEs for the service. & 8ms \\
+\bottomrule
+\end{tabular}
+\caption{\label{tab:table-name}The example for Table 1.}
+\end{table}
+
+\end{document}
