@@ -5,7 +5,7 @@ function [blind_resource,blind_success_prob] = blind_retransmission_sim(total_pa
         blind_success_prob = prod(1.-e.^blind_trans_time);
     elseif(type=="Monte Carlo")
         %% Using Simulation to estimate
-        total_simulation = 10^5;
+        total_simulation = 5*10^5;
         blind_success_cnt = 0;
         parfor simulation_time=1:total_simulation
             Fail_UE_per_round = zeros(total_packets,length(e));

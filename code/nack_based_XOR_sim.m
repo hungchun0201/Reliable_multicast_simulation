@@ -1,7 +1,7 @@
 %% nack-based retransmission
 function [nack_ave_trans_latency,nack_ave_resource_usage,nack_reliability,nack_ave_bottleneck_UE_latency] = nack_based_XOR_sim(total_packets, e, pkt_per_round, nack_m, XOR_pkt_num, L_constraint, T_RTT, RB_data, RB_feedback)
     
-    total_simulation = 10^5;
+    total_simulation = 5*10^5;
     tx_limit = floor(L_constraint/T_RTT)+1;
 
     total_latency = 0;
