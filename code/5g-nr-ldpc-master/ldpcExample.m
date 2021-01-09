@@ -16,7 +16,7 @@ codeRate = '3/4';
 
 % Get LDPC struct
 LDPC = ldpcGet(blkSize, codeRate);
-%{
+
 puncture_num = 46;
 weight = zeros(1, 512);
 parfor bit_flip = 1:512
@@ -67,7 +67,7 @@ parfor bit_flip = 1:512
     sum(codeword)
     weight(bit_flip) = sum(codeword);
 end
-%}
+
 % Simulation parameters
 ebno = 100000;
 numIter = 1e6;
