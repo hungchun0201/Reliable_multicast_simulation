@@ -74,14 +74,14 @@ snr = 10.^(snr_db./10);
 ber = zeros(1,11);
 per = zeros(1,11);
 numIter = 5e4;
-numErr = 0;
-cntErr = 0;
 % Convert E_b/N_0 to some SNR
 %snr = ebno + 10*log10(log2(M)) + 10*log10(str2num(codeRate));
 
 %% Simulate
 for idx = 1:11
-    parfor i = 1:numIter
+    numErr = 0;
+    cntErr = 0;
+    parfor jdx = 1:numIter
 
         % Generate random data
         data = randi([0 1], 1, LDPC.numInfBits);
