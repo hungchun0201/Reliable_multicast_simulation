@@ -73,7 +73,7 @@ snr_db = 10:5:60;
 snr = 10.^(snr_db./10);
 ber = zeros(1,11);
 per = zeros(1,11);
-numIter = 1e2;
+numIter = 5e4;
 numErr = 0;
 cntErr = 0;
 % Convert E_b/N_0 to some SNR
