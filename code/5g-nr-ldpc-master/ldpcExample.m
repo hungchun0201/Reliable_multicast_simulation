@@ -69,45 +69,54 @@ parfor bit_flip = 1:512
 end
 %}
 % Simulation parameters
-ebno = 100000;
-numIter = 2e3;
+snr_db = 10:5:60;
+snr = 10.^(snr_db./10);
+ber = zeros(1,11);
+per = zeros(1,11);
+numIter = 1e2;
 numErr = 0;
 cntErr = 0;
 % Convert E_b/N_0 to some SNR
-snr = ebno + 10*log10(log2(M)) + 10*log10(str2num(codeRate));
+%snr = ebno + 10*log10(log2(M)) + 10*log10(str2num(codeRate));
 
 %% Simulate
-parfor i = 1:numIter
-    
-    % Generate random data
-    data = randi([0 1], 1, LDPC.numInfBits);
+for idx = 1:11
+    parfor i = 1:numIter
 
-    % Encode
-    dataEnc = ldpcEncode(data, LDPC);
+        % Generate random data
+        data = randi([0 1], 1, LDPC.numInfBits);
 
-    % QAM mapping
-    dataMod = qammod(dataEnc(:), M, 'InputType', 'bit', 'UnitAveragePower', true);
+        % Encode
+        dataEnc = ldpcEncode(data, LDPC);
 
-    % AWGN
-    dataRx = awgn(dataMod, snr*(randn)^2);
+        % QAM mapping
+        dataMod = qammod(dataEnc(:), M, 'InputType', 'bit', 'UnitAveragePower', true);
 
-    % LLR demapping
-    dataLlr = qamdemod(dataRx, M, 'OutputType', 'llr', 'UnitAveragePower', true);
+        % AWGN
+        dataRx = awgn(dataMod, snr(idx)*(randn)^2);
 
-    % Decode
-    dataHat = ldpcDecode(dataLlr', LDPC);
+        % LLR demapping
+        dataLlr = qamdemod(dataRx, M, 'OutputType', 'llr', 'UnitAveragePower', true);
 
-    % Count number of bit errors
-    numErr = numErr + sum(abs(dataHat - data));
+        % Decode
+        dataHat = ldpcDecode(dataLlr', LDPC);
 
-    % Count number of error symbols
-    if sum(abs(dataHat - data)) ~= 0
-        cntErr = cntErr + 1;
+        % Count number of bit errors
+        numErr = numErr + sum(abs(dataHat - data));
+
+        % Count number of error symbols
+        if sum(abs(dataHat - data)) ~= 0
+            cntErr = cntErr + 1;
+        end
     end
-    
+       %% BER
+    ber(idx) = numErr / (numIter * LDPC.numInfBits)
+        %% SER
+    per(idx) = cntErr / numIter
 end
-
-%% BER
-ber = numErr / (numIter * LDPC.numInfBits)
-%% SER
-ser = cntErr/ numIter
+scatter(snr_db,per)
+set(gca,'yscale','log');
+ylim([10^-10,1]);
+ylabel("PER");
+xlabel("SNR");
+title("PER over SNR(QPSK)");
