@@ -12,7 +12,7 @@ M = 4;
 
 % LDPC config
 blkSize = 256;
-codeRate = '3/4';
+codeRate = '5/6';
 
 % Get LDPC struct
 LDPC = ldpcGet(blkSize, codeRate);
@@ -70,7 +70,7 @@ end
 %}
 % Simulation parameters
 ebno = 100000;
-numIter = 5e4;
+numIter = 2e3;
 numErr = 0;
 cntErr = 0;
 % Convert E_b/N_0 to some SNR
@@ -89,7 +89,7 @@ parfor i = 1:numIter
     dataMod = qammod(dataEnc(:), M, 'InputType', 'bit', 'UnitAveragePower', true);
 
     % AWGN
-    dataRx = awgn(dataMod, snr);
+    dataRx = awgn(dataMod, snr*(randn)^2);
 
     % LLR demapping
     dataLlr = qamdemod(dataRx, M, 'OutputType', 'llr', 'UnitAveragePower', true);
