@@ -91,11 +91,12 @@ for idx = 1:11
 
         % QAM mapping
         dataMod = qammod(dataEnc(:), M, 'InputType', 'bit', 'UnitAveragePower', true);
-
+        
+        dataRx = zeros(size(dataMod, 1), size(dataMod, 2));
         % Rayleigh with diversity
         for sym_idx = 1:size(dataMod, 1)
-            h = randn;
-            dataRx(sym_idx,1) = dataMod(sym_idx,1) + randn*(1/(snr(idx)*(h)^2*2))^(1/2) + i*randn*(1/(snr(idx)*(h)^2*2))^(1/2);
+            h = randn
+            dataRx(sym_idx,1) = awgn(dataMod(sym_idx,1), snr(idx)*(h^2));
         end
 
         % LLR demapping
