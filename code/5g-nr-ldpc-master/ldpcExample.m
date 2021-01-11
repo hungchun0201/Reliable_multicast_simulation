@@ -92,8 +92,11 @@ for idx = 1:11
         % QAM mapping
         dataMod = qammod(dataEnc(:), M, 'InputType', 'bit', 'UnitAveragePower', true);
 
-        % AWGN
-        dataRx = awgn(dataMod, snr(idx)*(randn)^2);
+        % Rayleigh
+        for sym_idx = 1:size(dataMod, 1)
+            h = randn;
+            dataRx(sym_idx,1) = dataMod(sym_idx,1) + randn*(1/(snr(idx)*(h)^2*2))^(1/2) + i*randn*(1/(snr(idx)*(h)^2*2))^(1/2);
+        end
 
         % LLR demapping
         dataLlr = qamdemod(dataRx, M, 'OutputType', 'llr', 'UnitAveragePower', true);
