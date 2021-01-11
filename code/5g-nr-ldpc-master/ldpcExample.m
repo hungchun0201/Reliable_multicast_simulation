@@ -73,7 +73,7 @@ snr_db = 10:5:60;
 snr = 10.^(snr_db./10);
 ber = zeros(1,11);
 per = zeros(1,11);
-numIter = 5e4;
+numIter = 100;
 % Convert E_b/N_0 to some SNR
 %snr = ebno + 10*log10(log2(M)) + 10*log10(str2num(codeRate));
 
@@ -81,7 +81,7 @@ numIter = 5e4;
 for idx = 1:11
     numErr = 0;
     cntErr = 0;
-    parfor jdx = 1:numIter
+    for jdx = 1:numIter
 
         % Generate random data
         data = randi([0 1], 1, LDPC.numInfBits);
@@ -94,9 +94,12 @@ for idx = 1:11
         
         dataRx = zeros(size(dataMod, 1), size(dataMod, 2));
         % Rayleigh with diversity
+        h = zeros(1, size(dataMod, 1));
+        tmp = randn;
         for sym_idx = 1:size(dataMod, 1)
-            h = randn
-            dataRx(sym_idx,1) = awgn(dataMod(sym_idx,1), snr(idx)*(h^2));
+            h(sym_idx) = tmp; 
+            dataRx(sym_idx,1) = awgn(dataMod(sym_idx,1), snr(idx)*(h(sym_idx)^2));
+            %dataRx(sym_idx,1) = awgn(dataMod(sym_idx,1), snr(idx));
         end
 
         % LLR demapping

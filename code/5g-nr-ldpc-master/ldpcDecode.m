@@ -41,9 +41,11 @@ switch LDPC.decType
                 nbVarNodes = find(LDPC.H(checkIdx,:)==1);
                 
                 % Tmp update llr
+                % tmpLlr = qij, Qv = Qi, Rcv = rji
                 tmpLlr = Qv(nbVarNodes) - full(Rcv(checkIdx,nbVarNodes));
                 
                 % Compute S = (Smag, Ssign)
+                % Smag = sum of phi(betaij)
                 Smag = sum(-log(minVal+tanh(abs(tmpLlr)/2)));
                 
                 % Count number of negative elements 
@@ -57,10 +59,13 @@ switch LDPC.decType
                 for varIter = 1:length(nbVarNodes)
                     
                     varIdx = nbVarNodes(varIter);
+                    % Qtmp = qij, Qv = Qi, Rcv = rji
                     Qtmp = Qv(varIdx) - Rcv(checkIdx, varIdx);
+                    % QtmpMag = phi(betaij)
                     QtmpMag = -log(minVal+tanh(abs(Qtmp)/2));
                     % Note: +minVal in order to deal with llr=0;
                     % implementation can be improved
+                    % QtmpMag = alphaij
                     QtmpSign = sign(Qtmp+minVal);
                     
                     % Update message passing matrix
@@ -68,13 +73,19 @@ switch LDPC.decType
                     Rcv(checkIdx, varIdx) = Ssign*QtmpSign * (-log(minVal+tanh(abs(Smag-QtmpMag)/2)));
                     
                     % Update Qv. From reference: Qv = Qtmp + Rcv
-                    Qv(varIdx)  = Qtmp + Rcv(checkIdx, varIdx);
                     
                 end
-                
             end
-            
+            for varIdx = 1:length(llrVec)
+                Qv(varIdx)  = llrVec(varIdx);
+                nbCheckNodes = find(LDPC.H(:,varIdx)==1);
+                for checkIter = 1:length(nbCheckNodes)
+                    checkIdx = nbCheckNodes(checkIter);
+                    Qv(varIdx)  = Qv(varIdx) + Rcv(checkIdx, varIdx);
+                end 
+            end 
         end
+
         
         % Convert Qv to decoded bits
         decVec = zeros(1,LDPC.numInfBits);
