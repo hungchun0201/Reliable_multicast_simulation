@@ -72,16 +72,16 @@ end
 snr_db = 10:5:60;
 snr = 10.^(snr_db./10);
 ber = zeros(1,11);
-per = zeros(1,11);
-numIter = 5e4;
+ser = zeros(1,11);
+numIter = 1e2;
+numErr = 0;
+cntErr = 0;
 % Convert E_b/N_0 to some SNR
 %snr = ebno + 10*log10(log2(M)) + 10*log10(str2num(codeRate));
 
 %% Simulate
 for idx = 1:11
-    numErr = 0;
-    cntErr = 0;
-    parfor jdx = 1:numIter
+    parfor i = 1:numIter
 
         % Generate random data
         data = randi([0 1], 1, LDPC.numInfBits);
@@ -92,11 +92,8 @@ for idx = 1:11
         % QAM mapping
         dataMod = qammod(dataEnc(:), M, 'InputType', 'bit', 'UnitAveragePower', true);
 
-        % Rayleigh with diversity
-        for sym_idx = 1:size(dataMod, 1)
-            h = randn;
-            dataRx(sym_idx,1) = dataMod(sym_idx,1) + randn*(1/(snr(idx)*(h)^2*2))^(1/2) + i*randn*(1/(snr(idx)*(h)^2*2))^(1/2);
-        end
+        % AWGN
+        dataRx = awgn(dataMod, snr(idx)*(randn)^2);
 
         % LLR demapping
         dataLlr = qamdemod(dataRx, M, 'OutputType', 'llr', 'UnitAveragePower', true);
@@ -115,11 +112,12 @@ for idx = 1:11
        %% BER
     ber(idx) = numErr / (numIter * LDPC.numInfBits)
         %% SER
-    per(idx) = cntErr / numIter
+    ser(idx) = cntErr / numIter
 end
-scatter(snr_db,per)
+scatter(snr_db,ser)
 set(gca,'yscale','log');
 ylim([10^-10,1]);
-ylabel("PER");
-xlabel("SNR");
+legend("AWGN","Rayleigh","Location","Best");
+ylabel("SER");
+xlabel("PNR");
 title("PER over SNR(QPSK)");
