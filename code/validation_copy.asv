@@ -3,12 +3,12 @@ m = 6;
 nack_m = 2;
 tx_limit = 3;
 err_prob = 0.2;
-sim_times = 1000000;
+sim_times = 10^6;
 %e = randn(1,n)*0.07 + err_prob;
 e = get_error_prob_list(n);
 tic
 fprintf("Averaeg error prob: %f, and std is: %f\n",mean(e),std(e));
-
+blind_trans_time = estimate_blind_m(e,rel_constraint,blind_upper_bound,1);
 clf
 for N = [16,18,20]
     x = 1:N;

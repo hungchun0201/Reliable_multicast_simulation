@@ -3,15 +3,15 @@ format long
 %% Parameters
 n = 30;
 
-L_constraint = 12;
-T_RTT = 2;
+L_constraint = 1;
+T_RTT = 0.2142;
 
-total_packets = 18;
+total_packets = 6;
 pkt_per_round = 2;
 XOR_pkt_num = 1;
 
 blind_upper_bound = 200; %blind_retransmission_upperbound
-nack_m = 2; % packet num in one nack_based transmission 
+nack_m = 3; % packet num in one nack_based transmission 
 
 rel_constraint = 0.9999;
 

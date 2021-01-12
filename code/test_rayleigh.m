@@ -7,7 +7,7 @@ x_axis = log10(SNR).*10;
 
 e_awgn = qfunc(sqrt(SNR));
 % e_rayleigh = 0.5.*(1.-sqrt(SNR./(2.+SNR)));
-e_rayleigh = 1./SNR.^7;
+e_rayleigh = 1./SNR.^2;
 SER_awgn = 2.*e_awgn-e_awgn.^2;
 SER_rayleigh = 2.*e_rayleigh-e_rayleigh.^2;
 
